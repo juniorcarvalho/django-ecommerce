@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.venv
+.idea
+.wttd
+*.sqlite3
+*pyc
+__pycache__
+.ipynb_checkpoints/
+staticfiles
+start.sh
+design
