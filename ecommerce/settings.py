@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
     'ecommerce.core',
     'ecommerce.catalog.apps.CatalogConfig',
 ]
@@ -120,3 +121,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# EMAIL_HOST = ''
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'conbits@conbits.com.br'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
