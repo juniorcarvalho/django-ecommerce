@@ -128,3 +128,7 @@ STATIC_URL = '/static/'
 DEFAULT_FROM_EMAIL = 'conbits@conbits.com.br'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#auth
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'

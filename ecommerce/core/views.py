@@ -1,12 +1,13 @@
 from django.shortcuts import render
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import TemplateView, CreateView
+from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse_lazy
 from .forms import ContactForm
-from django.views.generic import TemplateView
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
-
-index = IndexView.as_view()
 
 
 def contact(request):
@@ -20,6 +21,15 @@ def contact(request):
         'form': form,
         'success': success
     }
-
     return render(request, 'contact.html', context)
 
+
+class RegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'register.html'
+    model = get_user_model()
+    success_url = reverse_lazy('index')
+
+
+index = IndexView.as_view()
+register = RegisterView.as_view()
