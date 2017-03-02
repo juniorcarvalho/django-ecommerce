@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'ecommerce.core',
     'ecommerce.catalog.apps.CatalogConfig',
+    'ecommerce.accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #auth
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
+AUTH_USER_MODEL = 'accounts.User'

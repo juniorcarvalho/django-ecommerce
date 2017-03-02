@@ -24,12 +24,5 @@ def contact(request):
     return render(request, 'contact.html', context)
 
 
-class RegisterView(CreateView):
-    form_class = UserCreationForm
-    template_name = 'register.html'
-    model = get_user_model()
-    success_url = reverse_lazy('index')
-
-
 index = IndexView.as_view()
-register = RegisterView.as_view()
+
