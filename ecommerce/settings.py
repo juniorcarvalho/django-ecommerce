@@ -130,6 +130,11 @@ DEFAULT_FROM_EMAIL = 'conbits@conbits.com.br'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+AUTHENTICATION_BACKENDS=(
+    'django.contrib.auth.backends.ModelBackend',
+    'ecommerce.accounts.backends.ModelBackend',
+)
+
 #auth
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'

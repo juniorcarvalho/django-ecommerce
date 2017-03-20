@@ -2,7 +2,6 @@ from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from model_mommy import mommy
 
 
@@ -74,32 +73,8 @@ class LoginViewTestCase(TestCase):
     def test_login_error(self):
         data = {'username': self.user.username, 'password': '1234'}
         response = Client().post(self.url, data)
-        error_msg = ('Por favor, entre com um usuário  e senha corretos.'
+        error_msg = ('Por favor, entre com um Apelido / Usuário  e senha corretos.'
                      ' Note que ambos os campos diferenciam maiúsculas e minúsculas.')
         self.assertEquals(response.status_code, 200)
         self.assertFormError(response, 'form', None, error_msg)
-
-
-class RegisterViewTestCase(TestCase):
-    def setUp(self):
-        self.url = reverse('register')
-        self.response = Client().get(self.url)
-
-    def test_register_status_code(self):
-        self.assertEquals(self.response.status_code, 200)
-
-    def test_register_templated_uset(self):
-        self.assertTemplateUsed(self.response, 'register.html')
-
-    def test_register_ok(self):
-        data = {'username': 'teste', 'password1': 'brta@928', 'password2': 'brta@928'}
-        response = self.client.post(self.url, data)
-        index_url = reverse('index')
-        self.assertRedirects(response, index_url)
-        self.assertEquals(get_user_model().objects.count(), 1)
-
-
-
-
-
 
