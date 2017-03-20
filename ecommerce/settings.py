@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ecommerce.core',
     'ecommerce.catalog.apps.CatalogConfig',
     'ecommerce.accounts.apps.AccountsConfig',
+    'ecommerce.checkout',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,13 @@ AUTHENTICATION_BACKENDS=(
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 AUTH_USER_MODEL = 'accounts.User'
+
+# Messages
+from django.contrib.messages import constants as messages_constants
+MESSAGE_TAGS = {
+    messages_constants.DEBUG: 'debug',
+    messages_constants.INFO: 'info',
+    messages_constants.SUCCESS: 'success',
+    messages_constants.WARNING: 'warning',
+    messages_constants.ERROR: 'danger',
+}
