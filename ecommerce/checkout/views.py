@@ -1,14 +1,14 @@
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import RedirectView, TemplateView
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django.core.urlresolvers import reverse
-from .models import CartItem
+from .models import CartItem, Order
 from ecommerce.catalog.models import Product
 
 
 class CreateCartItemView(RedirectView):
-
     def get_redirect_url(self, *args, **kwargs):
         product = get_object_or_404(Product, slug=self.kwargs['slug'])
         if self.request.session.session_key is None:
@@ -23,7 +23,6 @@ class CreateCartItemView(RedirectView):
 
 
 class CartItemView(TemplateView):
-
     template_name = 'checkout/cart.html'
 
     def get_formset(self, clear=False):
@@ -60,5 +59,23 @@ class CartItemView(TemplateView):
         return self.render_to_response(context)
 
 
+class CheckoutView(LoginRequiredMixin, TemplateView):
+    template_name = 'checkout/checkout.html'
+
+    def get(self, request, *args, **kwargs):
+        session_key = request.session.session_key
+        if session_key and CartItem.objects.filter(cart_key=session_key).exists():
+            cart_items = CartItem.objects.filter(cart_key=session_key)
+            order = Order.objects.create_order(
+                user=request.user, cart_items=cart_items
+            )
+            CartItem.objects.filter(cart_key=session_key).delete()
+        else:
+            messages.info(request, 'Não há itens no carrinho de compras.')
+            return redirect('checkout:cart_item')
+        return super(CheckoutView, self).get(request, *args, **kwargs)
+
+
 create_cartitem = CreateCartItemView.as_view()
 cart_item = CartItemView.as_view()
+checkout = CheckoutView.as_view()

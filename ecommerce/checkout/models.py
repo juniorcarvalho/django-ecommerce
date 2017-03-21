@@ -1,8 +1,8 @@
 from django.db import models
+from django.conf import settings
 
 
 class CartItemManager(models.Manager):
-
     def add_item(self, cart_key, product):
         if self.filter(cart_key=cart_key, product=product).exists():
             created = False
@@ -32,6 +32,68 @@ class CartItem(models.Model):
 
     def __str__(self):
         return '{} [{}]'.format(self.product, self.quantity)
+
+
+class OrderManager(models.Manager):
+    def create_order(self, user, cart_items):
+        order = self.create(user=user)
+        for cart_item in cart_items:
+            order_item = OrderItem.objects.create(
+                order=order,
+                quantity=cart_item.quantity,
+                product=cart_item.product,
+                price=cart_item.price
+            )
+        return order
+
+
+class Order(models.Model):
+    STATUS_CHOICES = (
+        (0, 'Aguardando Pagamento'),
+        (1, 'Concluída'),
+        (2, 'Cancelada'),
+    )
+
+    PAYMENT_OPTION_CHOICES = (
+        ('pagseguro', 'PagSeguro'),
+        ('paypal', 'Paypal'),
+        ('deposit', 'Depósito')
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Usuário')
+    status = models.IntegerField('Status',
+                                 choices=STATUS_CHOICES,
+                                 default=0,
+                                 blank=True)
+    payment_options = models.CharField('Opção de Pagamento',
+                                       choices=PAYMENT_OPTION_CHOICES,
+                                       max_length=10,
+                                       default='deposit')
+    created = models.DateTimeField('Criado em', auto_now_add=True)
+    modified = models.DateTimeField('Modificado em', auto_now=True)
+
+    objects = OrderManager()
+
+    class Meta:
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
+
+    def __str__(self):
+        return 'Pedido #{}'.format(self.pk)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, verbose_name='Pedido', related_name='items')
+    product = models.ForeignKey('catalog.Product', verbose_name='Produto')
+    quantity = models.PositiveIntegerField('Quantidade')
+    price = models.DecimalField('Preço', decimal_places=2, max_digits=9)
+
+    class Meta:
+        verbose_name = 'Item do Pedido'
+        verbose_name_plural = 'Itens do Pedido'
+
+    def __str__(self):
+        return '[{}] {}'.format(self.order, self.product)
 
 
 def post_save_cart_item(instance, **kwargs):
